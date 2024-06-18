@@ -15,8 +15,8 @@ else ()
 endif ()
 
 # Verify the pico SDK is where we expect it, and abort if it's not
-if (NOT EXISTS ${USERHOME}/.pico-sdk)
-    message(FATAL_ERROR "expected to find the pico SDK and toolchain at ${USERHOME}/.pico-sdk")
+if (NOT EXISTS ${USERHOME}/.pico-sdk/sdk/1.5.1)
+    message(FATAL_ERROR "expected to find the pico SDK and toolchain at ${USERHOME}/.pico-sdk/sdk/1.5.1")
 endif ()
 
 set(PICO_SDK_PATH ${USERHOME}/.pico-sdk/sdk/1.5.1)
@@ -32,8 +32,6 @@ endif ()
 
 include(project.cmake)
 
-project(${PROJ_NAME} C)
-
 include(pico_sdk_import.cmake)
 
 # Uncomment this line if you want the pico_extras libraries
@@ -45,8 +43,16 @@ pico_sdk_init()
 
 add_executable(${PROJ_NAME} main.c)
 
+pico_enable_stdio_usb(${PROJ_NAME} 1)
+pico_enable_stdio_uart(${PROJ_NAME} 0)
+
+pico_set_program_name(${PROJ_NAME} ${PROJ_NAME})
+pico_set_program_version(${PROJ_NAME} ${PROJ_VER})
+
 target_include_directories(${PROJ_NAME} PRIVATE
         include
 )
 
 include(pico_link_libs.cmake)
+
+pico_add_extra_outputs(${PROJ_NAME})
